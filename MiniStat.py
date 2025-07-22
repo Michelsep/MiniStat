@@ -118,7 +118,7 @@ if uploaded_file:
         ax.set_title("Regressieplot")
         st.pyplot(fig)
 
-chart_path = "regression_plot.png"
+        chart_path = "regression_plot.png"
         fig.savefig(chart_path)
 
     elif analysis_type == "ANOVA":
