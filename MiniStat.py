@@ -74,9 +74,7 @@ if uploaded_file:
         col = st.selectbox("Kies kolom", numeric_columns)
         desc = df[col].describe()
         st.write(desc)
-        summary_report += f"Beschrijvende statistiek voor {col}:
-{desc.to_string()}
-"
+        summary_report += f"Beschrijvende statistiek voor {col}:\n{desc.to_string()}\n"
 
     elif analysis_type == "One-sample T-test":
         col = st.selectbox("Kies kolom", numeric_columns)
@@ -105,9 +103,7 @@ if uploaded_file:
         y = df[y_col].dropna()
         model = sm.OLS(y.loc[X.index], X).fit()
         st.write(model.summary())
-        summary_report += f"Regressie Y={y_col}, X={x_col}:
-{model.summary()}
-"
+        summary_report += f"Regressie Y={y_col}, X={x_col}:\n{model.summary()}\n"
 
         fig, ax = plt.subplots()
         sns.regplot(x=df[x_col], y=df[y_col], ax=ax)
@@ -120,9 +116,7 @@ if uploaded_file:
         model = sm.formula.ols(f"{dep} ~ C({group})", data=df).fit()
         anova_table = sm.stats.anova_lm(model, typ=2)
         st.write(anova_table)
-        summary_report += f"ANOVA voor {dep} op {group}:
-{anova_table.to_string()}
-"
+        summary_report += f"ANOVA voor {dep} op {group}:\n{anova_table.to_string()}\n"
 
     elif analysis_type == "I-MR Control Chart":
         col = st.selectbox("Kolom voor controlekaart", numeric_columns)
