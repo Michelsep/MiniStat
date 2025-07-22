@@ -118,6 +118,9 @@ if uploaded_file:
         ax.set_title("Regressieplot")
         st.pyplot(fig)
 
+	chart_path = "regression_plot.png"
+	fig.savefig(chart_path)
+
     elif analysis_type == "ANOVA":
         dep = st.selectbox("Afhankelijke variabele", numeric_columns)
         group = st.selectbox("Groepsvariabele", categorical_columns)
