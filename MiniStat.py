@@ -8,14 +8,19 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from fpdf import FPDF
 import io
+import os
 
-# -- PDF genereren in geheugen + downloadknop --
-def generate_pdf(summary_text):
+# -- PDF genereren met optionele afbeelding --
+def generate_pdf(summary_text, image_path=None):
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", size=12)
+
     for line in summary_text.split('\n'):
         pdf.multi_cell(0, 10, line)
+
+    if image_path and os.path.exists(image_path):
+        pdf.image(image_path, x=10, y=None, w=180)
 
     pdf_string = pdf.output(dest='S').encode('latin1')
     buffer = io.BytesIO(pdf_string)
@@ -46,11 +51,14 @@ def plot_imr_chart(data):
     axes[1].legend()
 
     st.pyplot(fig)
+    return fig
 
 # -- Streamlit UI --
 st.title("📊 MiniStat – Statistische Analysetool")
 
 uploaded_file = st.file_uploader("📁 Upload je CSV-bestand", type=["csv"])
+
+chart_path = None  # variabele voor figuur
 
 if uploaded_file:
     df = pd.read_csv(uploaded_file)
@@ -121,14 +129,17 @@ if uploaded_file:
     elif analysis_type == "I-MR Control Chart":
         col = st.selectbox("Kolom voor controlekaart", numeric_columns)
         st.write("Controlekaart:")
-        plot_imr_chart(df[col])
+        fig = plot_imr_chart(df[col])
         summary_report += f"I-MR controlekaart gegenereerd voor {col}.\n"
+
+        chart_path = "imr_chart.png"
+        fig.savefig(chart_path)
 
     # PDF-downloadknop
     if summary_report:
-        pdf_data = generate_pdf(summary_report)
+        pdf_data = generate_pdf(summary_report, image_path=chart_path)
         st.download_button(
-            label="📄 Download rapport als PDF",
+            label="📄 Download rapport als PDF (inclusief grafiek indien van toepassing)",
             data=pdf_data,
             file_name="rapport_minitstat.pdf",
             mime="application/pdf"
