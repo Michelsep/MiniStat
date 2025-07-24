@@ -244,10 +244,6 @@ if uploaded_file:
                 mime="application/pdf"
             )
 
-            else:
-            st.success("✅ Geen out-of-control punten gedetecteerd.")
-            summary_report += f"Distributieanalyse voor {col} met μ={mean:.2f}, σ={std:.2f}\n"
-            fig.savefig(chart_path)
             elif analysis_type == "Boxplot":
             cols = st.multiselect("Kies kolommen voor boxplot", numeric_columns)
             if cols:
