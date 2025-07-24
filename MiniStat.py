@@ -234,11 +234,11 @@ if uploaded_file:
         chart_path = "imr_chart.png"
         fig.savefig(chart_path)
 
-            elif analysis_type == "Boxplot":
-                cols = st.multiselect("Kies kolommen voor boxplot", numeric_columns)
-                if cols:
-                    fig, ax = plt.subplots()
-                    df[cols].boxplot(ax=ax)
+    elif analysis_type == "Boxplot":
+    cols = st.multiselect("Kies kolommen voor boxplot", numeric_columns)
+    if cols:
+    fig, ax = plt.subplots()
+    df[cols].boxplot(ax=ax)
                     ax.set_title("Boxplot")
                     st.pyplot(fig)
                 trend = detect_trend(df[col])
