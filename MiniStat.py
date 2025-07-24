@@ -208,13 +208,13 @@ if uploaded_file:
         fig.savefig(chart_path)
 
                         # Vergelijking tonen
+    if len(x_cols) == 1:
         intercept = model.params[0]
         slope = model.params[1]
         equation = "{} = {:.3f} + {:.3f} * {}".format(y_col, intercept, slope, x_cols[0])
         st.markdown(f"📉 Regressievergelijking: `{equation}`")
     else:
         st.info("📊 Regressiegrafiek alleen zichtbaar bij 1 X-variabele.")
-            elif analysis_type == "I-MR Control Chart":
                 col = st.selectbox("Kolom voor controlekaart", numeric_columns)
                 st.write("Controlekaart:")
                 fig = plot_imr_chart(df[col])
