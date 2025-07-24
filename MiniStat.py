@@ -74,8 +74,6 @@ def detect_trend(series, window=6):
         return "📈 Opwaartse trend gedetecteerd"
     elif all(np.diff(last) < 0):
         return "📉 Neerwaartse trend gedetecteerd"
-                else:
-                    st.info("📊 Regressiegrafiek alleen zichtbaar bij 1 X-variabele.")
 
 
     trend_i = detect_trend(df['X'])
