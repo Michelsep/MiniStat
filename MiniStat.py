@@ -56,12 +56,19 @@ def plot_imr_chart(data):
 # -- Streamlit UI --
 st.title("📊 MiniStat – Statistische Analysetool")
 
-uploaded_file = st.file_uploader("📁 Upload je CSV-bestand", type=["csv"])
+uploaded_file = st.file_uploader("📁 Upload je gegevensbestand", type=["csv", "xls", "xlsx"])
 
 chart_path = None  # variabele voor figuur
 
 if uploaded_file:
-    df = pd.read_csv(uploaded_file)
+    if uploaded_file.name.endswith(".csv"):
+        df = pd.read_csv(uploaded_file)
+    elif uploaded_file.name.endswith((".xls", ".xlsx")):
+        df = pd.read_excel(uploaded_file)
+    else:
+        st.error("❌ Bestandstype niet ondersteund.")
+        st.stop()
+
     st.success("✅ Bestand geladen")
 
     st.subheader("🔍 Voorbeeld van de dataset")
@@ -134,11 +141,9 @@ if uploaded_file:
         st.write("Controlekaart:")
         fig = plot_imr_chart(df[col])
         summary_report += f"I-MR controlekaart gegenereerd voor {col}.\n"
-
         chart_path = "imr_chart.png"
         fig.savefig(chart_path)
 
-    # PDF-downloadknop
     if summary_report:
         pdf_data = generate_pdf(summary_report, image_path=chart_path)
         st.download_button(
