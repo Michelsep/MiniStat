@@ -277,11 +277,11 @@ elif analysis_type == "Distributieanalyse":
         lcl = mean - 3 * std_dev
         ooc_points = [i for i, x in enumerate(data) if x > ucl or x < lcl]
         if ooc_points:
-        st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
+        if ooc_points:
+            st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
         else:
-        st.success("✅ Geen out-of-control punten gedetecteerd.")
-                summary_report += f"Distributieanalyse voor {col} met μ={mean:.2f}, σ={std:.2f}\n"
-                chart_path = "distribution.png"
+            st.success("✅ Geen out-of-control punten gedetecteerd.")
+        summary_report += f"Distributieanalyse voor {col} met μ={mean:.2f}, σ={std:.2f}\n"
                 fig.savefig(chart_path)
 
             elif analysis_type == "Chi-kwadraat test":
