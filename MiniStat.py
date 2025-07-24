@@ -113,31 +113,42 @@ if uploaded_file:
     elif analysis_type == "I-MR Control Chart":
         col = st.selectbox("Kolom voor controlekaart", numeric_columns)
         if col:
-            data = df[col]
+            data = df[col].reset_index(drop=True)
             mean = np.mean(data)
             std_dev = np.std(data, ddof=1)
             ucl = mean + 3 * std_dev
             lcl = mean - 3 * std_dev
-            ooc_points = df[(df[col] > ucl) | (df[col] < lcl)].index.tolist()
+            ooc_points = data[(data > ucl) | (data < lcl)].index.tolist()
+            mr = data.diff().abs().dropna()
+            mr_mean = mr.mean()
+            mr_ucl = mr_mean * 3.267
 
-            fig, ax = plt.subplots()
-            ax.plot(data.index, data, marker='o')
-            ax.axhline(mean, color='green', linestyle='--', label=f'Gemiddelde ({mean:.2f})')
-            ax.axhline(ucl, color='red', linestyle='--', label='UCL')
-            ax.axhline(lcl, color='red', linestyle='--', label='LCL')
+            fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6), sharex=True)
+            ax1.plot(data, marker='o')
+            ax1.axhline(mean, color='green', linestyle='--', label=f'Gemiddelde ({mean:.2f})')
+            ax1.axhline(ucl, color='red', linestyle='--', label='UCL')
+            ax1.axhline(lcl, color='red', linestyle='--', label='LCL')
             if ooc_points:
-                ax.plot(ooc_points, data[ooc_points], 'ro', label='Out-of-control')
+                ax1.plot(ooc_points, data[ooc_points], 'ro', label='Out-of-control')
                 st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
-            ax.set_title(f'I-MR Chart voor {col}')
-            ax.legend()
+            ax1.set_title(f'I Chart voor {col}')
+            ax1.legend()
+
+            ax2.plot(mr, marker='o', color='purple')
+            ax2.axhline(mr_mean, color='green', linestyle='--', label=f'MR Gemiddelde ({mr_mean:.2f})')
+            ax2.axhline(mr_ucl, color='red', linestyle='--', label='MR UCL')
+            ax2.set_title('MR Chart')
+            ax2.legend()
+
+            fig.tight_layout()
             chart_path = "imr_chart.png"
             fig.savefig(chart_path)
             st.pyplot(fig)
 
-            summary_report += f"I-MR chart voor {col}\nGemiddelde: {mean:.2f}, UCL: {ucl:.2f}, LCL: {lcl:.2f}\n"
+            summary_report += f"I-MR chart voor {col}\\nGemiddelde: {mean:.2f}, UCL: {ucl:.2f}, LCL: {lcl:.2f}\\n"
+            summary_report += f"MR Gemiddelde: {mr_mean:.2f}, MR UCL: {mr_ucl:.2f}\\n"
             if ooc_points:
-                summary_report += f"⚠️ Out-of-control punten: {ooc_points}\n"
-
+                summary_report += f"⚠️ Out-of-control punten: {ooc_points}\\n"
     if summary_report:
         st.subheader("📄 Analyse Resultaten")
         st.text_area("Resultaat", summary_report, height=300)
