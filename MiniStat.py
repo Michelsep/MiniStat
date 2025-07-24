@@ -141,8 +141,12 @@ if uploaded_file:
                     y = y.loc[X.index]  # align indices
                     model = sm.OLS(y, X).fit()
                     st.write(model.summary())
+
                     summary_text = (
-                        'Multipele regressie Y=' + y_col + ', X=' + ', '.join(x_cols) + '\n' + str(model.summary()) + '\n'
+                        'Multipele regressie Y=' + y_col + ', X=' + ', '.join(x_cols) +
+                        '
+' + str(model.summary()) + '
+'
                     )
                     summary_report += summary_text
 
@@ -151,7 +155,8 @@ if uploaded_file:
                         sns.regplot(x=df[x_cols[0]], y=df[y_col], ax=ax)
                         ax.set_title("Regressieplot")
                         r_squared = model.rsquared
-                        ax.text(0.05, 0.95, "$R^2$ = {:.4f}".format(r_squared), transform=ax.transAxes, fontsize=10, verticalalignment='top')
+                        ax.text(0.05, 0.95, "$R^2$ = {:.4f}".format(r_squared),
+                                transform=ax.transAxes, fontsize=10, verticalalignment='top')
                         st.pyplot(fig)
                         chart_path = "regression_plot.png"
                         fig.savefig(chart_path)
@@ -162,15 +167,7 @@ if uploaded_file:
                         equation = "{} = {:.3f} + {:.3f} * {}".format(y_col, intercept, slope, x_cols[0])
                         st.markdown(f"📉 Regressievergelijking: `{equation}`")
                     else:
-                    st.info("📊 Regressiegrafiek alleen zichtbaar bij 1 X-variabele.")
-                dep = st.selectbox("Afhankelijke variabele", numeric_columns)
-                group = st.selectbox("Groepsvariabele", categorical_columns)
-                model = sm.formula.ols(f"{dep} ~ C({group})", data=df).fit()
-                anova_table = sm.stats.anova_lm(model, typ=2)
-                st.write(anova_table)
-                summary_report += f"ANOVA voor {dep} op {group}:\n{anova_table.to_string()}\n"
-
-            elif analysis_type == "I-MR Control Chart":
+                        st.info("📊 Regressiegrafiek alleen zichtbaar bij 1 X-variabele.")elif analysis_type == "I-MR Control Chart":
                 col = st.selectbox("Kolom voor controlekaart", numeric_columns)
                 st.write("Controlekaart:")
                 fig = plot_imr_chart(df[col])
