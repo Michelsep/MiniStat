@@ -142,11 +142,7 @@ if uploaded_file:
                     model = sm.OLS(y, X).fit()
                     st.write(model.summary())
 
-                    summary_text = (
-                        'Multipele regressie Y=' + y_col + ', X=' + ', '.join(x_cols) +
-                        '
-' + str(model.summary()) + '
-'
+                    summary_text = "Multipele regressie Y=" + y_col + ", X=" + ", ".join(x_cols) + "\n" + str(model.summary()) + "\n"
                     )
                     summary_report += summary_text
 
