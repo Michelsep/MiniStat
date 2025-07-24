@@ -208,9 +208,9 @@ if uploaded_file:
         fig.savefig(chart_path)
 
                         # Vergelijking tonen
-                        intercept = model.params[0]
-                        slope = model.params[1]
-                        equation = "{} = {:.3f} + {:.3f} * {}".format(y_col, intercept, slope, x_cols[0])
+        intercept = model.params[0]
+        slope = model.params[1]
+        equation = "{} = {:.3f} + {:.3f} * {}".format(y_col, intercept, slope, x_cols[0])
                 st.markdown(f"📉 Regressievergelijking: `{equation}`")
                 else:
                         st.info("📊 Regressiegrafiek alleen zichtbaar bij 1 X-variabele.")
