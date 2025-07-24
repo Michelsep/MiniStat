@@ -22,8 +22,8 @@ def generate_pdf_report(text, chart_path=None):
         pdf.image(chart_path, x=10, y=None, w=180)
     buffer = io.BytesIO()
     pdf.output(buffer)
-    return buffer.getvalue()
-
+    pdf_output = pdf.output(dest="S").encode("latin-1")
+    return pdf_output
 st.title("📊 MiniStat - Statistische Analyse Tool")
 
 uploaded_file = st.file_uploader("Upload een CSV of Excel-bestand", type=["csv", "xls", "xlsx"])
