@@ -85,7 +85,7 @@ if uploaded_file:
     elif uploaded_file.name.endswith((".xls", ".xlsx")):
         df = pd.read_excel(uploaded_file)
     else:
-                    st.info("📊 Regressiegrafiek alleen zichtbaar bij 1 X-variabele.")
+        st.error("❌ Bestandstype niet ondersteund.")
         st.stop()
 
     numeric_columns = df.select_dtypes(include=np.number).columns.tolist()
