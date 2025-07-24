@@ -139,9 +139,9 @@ if uploaded_file:
                     y = y.loc[X.index]  # align indices
                     model = sm.OLS(y, X).fit()
                     st.write(model.summary())
-                    summary_text = "Multipele regressie Y=" + y_col + ", X=" + ", ".join(x_cols) + ":
-" + str(model.summary()) + "
-"
+                    summary_text = (
+                        'Multipele regressie Y=' + y_col + ', X=' + ', '.join(x_cols) + '\n' + str(model.summary()) + '\n'
+                    )
                     summary_report += summary_text
 
                     if len(x_cols) == 1:
