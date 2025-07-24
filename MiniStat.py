@@ -289,9 +289,9 @@ elif analysis_type == "Chi-kwadraat test":
         table = pd.crosstab(df[col1], df[col2])
         chi2, p, dof, expected = stats.chi2_contingency(table)
         st.write("Contingentietabel")
-                st.dataframe(table)
-                st.write(f"Chi-kwadraat = {chi2:.3f}, df = {dof}, p-waarde = {p:.4f}")
-                summary_report += f"Chi-kwadraat test tussen {col1} en {col2}: chi2 = {chi2:.3f}, p = {p:.4f}\n"
+        st.dataframe(table)
+        st.write(f"Chi-kwadraat = {chi2:.3f}, df = {dof}, p-waarde = {p:.4f}")
+        summary_report += f"Chi-kwadraat test tussen {col1} en {col2}: chi2 = {chi2:.3f}, p = {p:.4f}\n"
 
         if view_option in ["📋 Alleen datatabel", "📊 Beide (resultaten + data)"]:
             st.subheader("🧾 Dataweergave")
