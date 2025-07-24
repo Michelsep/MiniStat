@@ -205,7 +205,7 @@ if uploaded_file:
             st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
         else:
             st.success("✅ Geen out-of-control punten gedetecteerd.")
-                        fig.savefig(chart_path)
+        fig.savefig(chart_path)
 
                         # Vergelijking tonen
                         intercept = model.params[0]
