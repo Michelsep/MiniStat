@@ -132,20 +132,34 @@ if uploaded_file:
 
             elif analysis_type == "Lineaire regressie":
                 y_col = st.selectbox("Y (afhankelijk)", numeric_columns)
-                x_col = st.selectbox("X (onafhankelijk)", [col for col in numeric_columns if col != y_col])
-                X = sm.add_constant(df[x_col].dropna())
-                y = df[y_col].dropna()
-                model = sm.OLS(y.loc[X.index], X).fit()
-                st.write(model.summary())
-                summary_report += f"Regressie Y={y_col}, X={x_col}:\n{model.summary()}\n"
-                fig, ax = plt.subplots()
-                sns.regplot(x=df[x_col], y=df[y_col], ax=ax)
-                ax.set_title("Regressieplot")
-                st.pyplot(fig)
-                chart_path = "regression_plot.png"
-                fig.savefig(chart_path)
+                x_cols = st.multiselect("X (onafhankelijk)", [col for col in numeric_columns if col != y_col])
+                if x_cols:
+                    X = sm.add_constant(df[x_cols].dropna())
+                    y = df[y_col].dropna()
+                    y = y.loc[X.index]  # align indices
+                    model = sm.OLS(y, X).fit()
+                    st.write(model.summary())
+                    summary_report += f"Multipele regressie Y={y_col}, X={', '.join(x_cols)}:
+{model.summary()}
+"
 
-            elif analysis_type == "ANOVA":
+                    if len(x_cols) == 1:
+                        fig, ax = plt.subplots()
+                        sns.regplot(x=df[x_cols[0]], y=df[y_col], ax=ax)
+                        ax.set_title("Regressieplot")
+                        r_squared = model.rsquared
+                        ax.text(0.05, 0.95, f"$R^2$ = {r_squared:.4f}", transform=ax.transAxes, fontsize=10, verticalalignment='top')
+                        st.pyplot(fig)
+                        chart_path = "regression_plot.png"
+                        fig.savefig(chart_path)
+
+                        # Vergelijking tonen
+                        intercept = model.params[0]
+                        slope = model.params[1]
+                        equation = f"{y_col} = {intercept:.3f} + {slope:.3f} * {x_cols[0]}"
+                        st.markdown(f"📉 Regressievergelijking: `{equation}`")
+                    else:
+                        st.info("📊 Regressiegrafiek alleen zichtbaar bij 1 X-variabele.")elif analysis_type == "ANOVA":
                 dep = st.selectbox("Afhankelijke variabele", numeric_columns)
                 group = st.selectbox("Groepsvariabele", categorical_columns)
                 model = sm.formula.ols(f"{dep} ~ C({group})", data=df).fit()
