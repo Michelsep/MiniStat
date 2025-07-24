@@ -129,7 +129,7 @@ if uploaded_file:
             ax1.axhline(ucl, color='red', linestyle='--', label='UCL')
             ax1.axhline(lcl, color='red', linestyle='--', label='LCL')
             if ooc_points:
-            ax1.plot(ooc_points, data[ooc_points], 'ro', markersize=8, label='Out-of-control')
+                ax1.plot(ooc_points, data[ooc_points], 'ro', label='Out-of-control')
                 st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
             ax1.set_title(f'I Chart voor {col}')
             ax1.legend()
