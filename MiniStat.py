@@ -92,7 +92,7 @@ if uploaded_file:
     st.sidebar.header("📌 Kies Analyse")
     analysis_type = st.sidebar.radio(
         "Selecteer analyse:",
-        ("Beschrijvende statistiek", "One-sample T-test", "Two-sample T-test", "Lineaire regressie", "ANOVA", "I-MR Control Chart")
+        ("Beschrijvende statistiek", "One-sample T-test", "Two-sample T-test", "Lineaire regressie", "ANOVA", "I-MR Control Chart", "Boxplot", "Distributieanalyse", "Chi-kwadraat test")
     )
 
     summary_report = ""
@@ -162,7 +162,47 @@ if uploaded_file:
             st.subheader("🧾 Dataweergave")
             st.dataframe(df)
 
-        if summary_report and view_option != "📋 Alleen datatabel":
+        
+elif analysis_type == "Boxplot":
+    cols = st.multiselect("Kies kolommen voor boxplot", numeric_columns)
+    if cols:
+        fig, ax = plt.subplots()
+        df[cols].boxplot(ax=ax)
+        ax.set_title("Boxplot")
+        st.pyplot(fig)
+        summary_report += f"Boxplot voor kolommen: {', '.join(cols)}\n"
+        chart_path = "boxplot.png"
+        fig.savefig(chart_path)
+
+elif analysis_type == "Distributieanalyse":
+    col = st.selectbox("Kies kolom voor distributieanalyse", numeric_columns)
+    data = df[col].dropna()
+    mean, std = data.mean(), data.std()
+    fig, ax = plt.subplots()
+    sns.histplot(data, kde=False, stat='density', bins=20, ax=ax, color='skyblue', label='Histogram')
+    xmin, xmax = ax.get_xlim()
+    x = np.linspace(xmin, xmax, 100)
+    p = stats.norm.pdf(x, mean, std)
+    ax.plot(x, p, 'r', linewidth=2, label='Normale verdeling')
+    ax.set_title(f"Distributie van {col}")
+    ax.legend()
+    st.pyplot(fig)
+    summary_report += f"Distributieanalyse voor {col} met μ={mean:.2f}, σ={std:.2f}\n"
+    chart_path = "distribution.png"
+    fig.savefig(chart_path)
+
+elif analysis_type == "Chi-kwadraat test":
+    col1 = st.selectbox("Kies categorische kolom 1", categorical_columns)
+    col2 = st.selectbox("Kies categorische kolom 2", categorical_columns)
+    table = pd.crosstab(df[col1], df[col2])
+    chi2, p, dof, expected = stats.chi2_contingency(table)
+    st.write("Contingentietabel")
+    st.dataframe(table)
+    st.write(f"Chi-kwadraat = {chi2:.3f}, df = {dof}, p-waarde = {p:.4f}")
+    summary_report += f"Chi-kwadraat test tussen {col1} en {col2}: chi2 = {chi2:.3f}, p = {p:.4f}\n"
+
+
+    if summary_report and view_option != "📋 Alleen datatabel":
             pdf_data = generate_pdf(summary_report, image_path=chart_path)
             st.download_button(
                 label="📄 Download rapport als PDF (inclusief grafiek indien van toepassing)",
