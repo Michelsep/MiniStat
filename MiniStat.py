@@ -244,28 +244,6 @@ if uploaded_file:
                 mime="application/pdf"
             )
 
-            elif analysis_type == "Boxplot":
-            cols = st.multiselect("Kies kolommen voor boxplot", numeric_columns)
-            if cols:
-            fig, ax = plt.subplots()
-            df[cols].boxplot(ax=ax)
-            ax.set_title("Boxplot")
-            st.pyplot(fig)
-            trend = detect_trend(df[col])
-            st.markdown(f"**📊 Trendanalyse:** {trend}")
-            data = df[col].dropna().values
-            mean = np.mean(data)
-            std_dev = np.std(data, ddof=1)
-            ucl = mean + 3 * std_dev
-            lcl = mean - 3 * std_dev
-            ooc_points = [i for i, x in enumerate(data) if x > ucl or x < lcl]
-            if ooc_points:
-            st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
-            else:
-            st.success("✅ Geen out-of-control punten gedetecteerd.")
-            summary_report += f"Boxplot voor kolommen: {', '.join(cols)}\n"
-            chart_path = "boxplot.png"
-            fig.savefig(chart_path)
             elif analysis_type == "Distributieanalyse":
             col = st.selectbox("Kies kolom voor distributieanalyse", numeric_columns)
             data = df[col].dropna()
@@ -291,6 +269,28 @@ if uploaded_file:
             else:
             st.success("✅ Geen out-of-control punten gedetecteerd.")
             summary_report += f"Distributieanalyse voor {col} met μ={mean:.2f}, σ={std:.2f}\n"
+            fig.savefig(chart_path)
+            elif analysis_type == "Boxplot":
+            cols = st.multiselect("Kies kolommen voor boxplot", numeric_columns)
+            if cols:
+            fig, ax = plt.subplots()
+            df[cols].boxplot(ax=ax)
+            ax.set_title("Boxplot")
+            st.pyplot(fig)
+            trend = detect_trend(df[col])
+            st.markdown(f"**📊 Trendanalyse:** {trend}")
+            data = df[col].dropna().values
+            mean = np.mean(data)
+            std_dev = np.std(data, ddof=1)
+            ucl = mean + 3 * std_dev
+            lcl = mean - 3 * std_dev
+            ooc_points = [i for i, x in enumerate(data) if x > ucl or x < lcl]
+            if ooc_points:
+            st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
+            else:
+            st.success("✅ Geen out-of-control punten gedetecteerd.")
+            summary_report += f"Boxplot voor kolommen: {', '.join(cols)}\n"
+            chart_path = "boxplot.png"
             fig.savefig(chart_path)
             elif analysis_type == "Chi-kwadraat test":
             col1 = st.selectbox("Kies categorische kolom 1", categorical_columns)
