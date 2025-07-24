@@ -6,7 +6,6 @@ import seaborn as sns
 from scipy import stats
 from statsmodels.formula.api import ols
 from fpdf import FPDF
-import io
 import base64
 import os
 
@@ -20,10 +19,9 @@ def generate_pdf_report(text, chart_path=None):
         pdf.cell(200, 10, txt=line, ln=True)
     if chart_path and os.path.exists(chart_path):
         pdf.image(chart_path, x=10, y=None, w=180)
-    buffer = io.BytesIO()
-    pdf.output(buffer)
     pdf_output = pdf.output(dest="S").encode("latin-1")
     return pdf_output
+
 st.title("📊 MiniStat - Statistische Analyse Tool")
 
 uploaded_file = st.file_uploader("Upload een CSV of Excel-bestand", type=["csv", "xls", "xlsx"])
@@ -49,10 +47,7 @@ if uploaded_file:
         "Regressieanalyse",
         "ANOVA",
         "T-toets (2-sample)",
-        "I-MR Control Chart",
-        "Boxplot",
-        "Distributieanalyse",
-        "Chi-kwadraat test"
+        "I-MR Control Chart"
     ])
 
     summary_report = ""
@@ -142,38 +137,6 @@ if uploaded_file:
             summary_report += f"I-MR chart voor {col}\nGemiddelde: {mean:.2f}, UCL: {ucl:.2f}, LCL: {lcl:.2f}\n"
             if ooc_points:
                 summary_report += f"⚠️ Out-of-control punten: {ooc_points}\n"
-
-    elif analysis_type == "Boxplot":
-        cols = st.multiselect("Kies kolommen voor boxplot", numeric_columns)
-        if cols:
-            fig, ax = plt.subplots()
-            sns.boxplot(data=df[cols], ax=ax)
-            ax.set_title("Boxplot")
-            chart_path = "boxplot.png"
-            fig.savefig(chart_path)
-            st.pyplot(fig)
-            summary_report += f"Boxplot voor kolommen: {', '.join(cols)}\n"
-
-    elif analysis_type == "Distributieanalyse":
-        col = st.selectbox("Kolom voor distributie", numeric_columns)
-        if col:
-            data = df[col]
-            fig, ax = plt.subplots()
-            sns.histplot(data, kde=True, ax=ax)
-            ax.set_title(f"Distributie van {col}")
-            chart_path = "distributie.png"
-            fig.savefig(chart_path)
-            st.pyplot(fig)
-            summary_report += f"Distributieanalyse voor {col}\nGemiddelde: {data.mean():.2f}, StdDev: {data.std():.2f}\n"
-
-    elif analysis_type == "Chi-kwadraat test":
-        col1 = st.selectbox("Categorische kolom 1", all_columns)
-        col2 = st.selectbox("Categorische kolom 2", all_columns)
-        if col1 and col2:
-            table = pd.crosstab(df[col1], df[col2])
-            chi2, p, dof, expected = stats.chi2_contingency(table)
-            st.dataframe(table)
-            summary_report += f"Chi-kwadraat test tussen {col1} en {col2}\nChi²={chi2:.2f}, p={p:.4f}, DoF={dof}\n"
 
     if summary_report:
         st.subheader("📄 Analyse Resultaten")
