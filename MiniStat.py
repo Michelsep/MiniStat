@@ -61,8 +61,15 @@ uploaded_file = st.file_uploader("📁 Upload je Data-bestand", type=["csv/xls"]
 chart_path = None  # variabele voor figuur
 
 if uploaded_file:
-    df = pd.read_csv(uploaded_file)
-    st.success("✅ Bestand geladen")
+    if uploaded_file.name.endswith (".csv"):
+       df = pd.read_csv(uploaded_file)
+elif uploaded_file.name.endswith((".xls", "xlsx")):
+       df = pd.read_excel(uploaded_file)
+Else:
+st.error("Bestandstype niet ondersteund.")
+st.stop()
+st.success("✅ Bestand geladen")
+
 
     st.subheader("🔍 Voorbeeld van de dataset")
     st.dataframe(df.head())
