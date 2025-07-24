@@ -10,7 +10,6 @@ from fpdf import FPDF
 import io
 import os
 
-# -- PDF genereren met optionele afbeelding --
 def generate_pdf(summary_text, image_path=None):
     pdf = FPDF()
     pdf.add_page()
@@ -23,15 +22,19 @@ def generate_pdf(summary_text, image_path=None):
     buffer = io.BytesIO(pdf_string)
     return buffer
 
-# -- I-MR Chart functie met OOC en trendanalyse --
 def plot_imr_chart(data):
     df = pd.DataFrame({'X': data.dropna()})
     df['MR'] = df['X'].diff().abs()
+
     mean_x = df['X'].mean()
     std_x = df['X'].std()
-    UCL = mean_x + 3 * std_x
-    LCL = mean_x - 3 * std_x
-    ooc_points = df[(df['X'] > UCL) | (df['X'] < LCL)]
+    UCL_I = mean_x + 3 * std_x
+    LCL_I = mean_x - 3 * std_x
+    ooc_i = df[(df['X'] > UCL_I) | (df['X'] < LCL_I)]
+
+    mean_mr = df['MR'].mean()
+    UCL_MR = mean_mr * 3.267
+    ooc_mr = df[df['MR'] > UCL_MR]
 
     def detect_trend(series, window=6):
         last = series[-window:]
@@ -42,29 +45,30 @@ def plot_imr_chart(data):
         else:
             return "Geen duidelijke trend in de laatste waarnemingen"
 
-    trend_text = detect_trend(df['X'])
+    trend_i = detect_trend(df['X'])
+    trend_mr = detect_trend(df['MR'].dropna())
 
-    fig, axes = plt.subplots(2, 1, figsize=(8, 6))
-    axes[0].plot(df['X'], marker='o')
-    axes[0].axhline(mean_x, color='green', linestyle='--', label='Gemiddelde')
-    axes[0].axhline(UCL, color='red', linestyle='--', label='UCL')
-    axes[0].axhline(LCL, color='red', linestyle='--', label='LCL')
-    axes[0].scatter(ooc_points.index, ooc_points['X'], color='red', zorder=5, label='OOC punten', marker='X', s=100)
+    fig, axes = plt.subplots(2, 1, figsize=(10, 7))
+    axes[0].plot(df['X'], marker='o', label='Waarnemingen')
+    axes[0].axhline(mean_x, color='green', linestyle='--', label=f'Gemiddelde = {mean_x:.2f}')
+    axes[0].axhline(UCL_I, color='red', linestyle='--', label='UCL')
+    axes[0].axhline(LCL_I, color='red', linestyle='--', label='LCL')
+    axes[0].scatter(ooc_i.index, ooc_i['X'], color='red', marker='X', s=100, label='OOC punten')
     axes[0].set_title("I-chart")
     axes[0].legend()
 
-    axes[1].plot(df['MR'], marker='o')
-    axes[1].axhline(df['MR'].mean(), color='green', linestyle='--', label='Gemiddelde MR')
-    axes[1].axhline(df['MR'].mean() * 3.267, color='red', linestyle='--', label='UCL')
+    axes[1].plot(df['MR'], marker='o', label='Moving Range')
+    axes[1].axhline(mean_mr, color='green', linestyle='--', label=f'Gemiddelde MR = {mean_mr:.2f}')
+    axes[1].axhline(UCL_MR, color='red', linestyle='--', label='UCL')
+    axes[1].scatter(ooc_mr.index, ooc_mr['MR'], color='red', marker='X', s=100, label='OOC MR punten')
     axes[1].set_title("MR-chart")
     axes[1].legend()
 
+    plt.figtext(0.5, 0.01, f"I-chart: {trend_i} | MR-chart: {trend_mr}", ha="center", fontsize=10)
     fig.tight_layout()
-    plt.figtext(0.5, 0.01, trend_text, ha="center", fontsize=10)
     st.pyplot(fig)
     return fig
 
-# -- Streamlit GUI met layout-opties --
 st.set_page_config(layout="wide")
 st.title("📊 MiniStat – Statistische Analysetool (Minitab-stijl)")
 
@@ -131,12 +135,10 @@ if uploaded_file:
                 model = sm.OLS(y.loc[X.index], X).fit()
                 st.write(model.summary())
                 summary_report += f"Regressie Y={y_col}, X={x_col}:\n{model.summary()}\n"
-
                 fig, ax = plt.subplots()
                 sns.regplot(x=df[x_col], y=df[y_col], ax=ax)
                 ax.set_title("Regressieplot")
                 st.pyplot(fig)
-
                 chart_path = "regression_plot.png"
                 fig.savefig(chart_path)
 
