@@ -36,15 +36,16 @@ def plot_imr_chart(data):
     UCL_MR = mean_mr * 3.267
     ooc_mr = df[df['MR'] > UCL_MR]
 
-    def detect_trend(series, window=6):
-        last = series[-window:]
-        if all(np.diff(last) > 0):
+    
+def detect_trend(series, window=6):
+    last = series[-window:]
+    if all(np.diff(last) > 0):
         return "📈 Opwaartse trend gedetecteerd"
-        elif all(np.diff(last) < 0):
-            return "📉 Neerwaartse trend gedetecteerd"
-        else:
-                    pass  # placeholder voor else-block
-            return "Geen duidelijke trend in de laatste waarnemingen"
+    elif all(np.diff(last) < 0):
+        return "📉 Neerwaartse trend gedetecteerd"
+    else:
+        return "Geen duidelijke trend in de laatste waarnemingen"
+
 
     trend_i = detect_trend(df['X'])
     trend_mr = detect_trend(df['MR'].dropna())
