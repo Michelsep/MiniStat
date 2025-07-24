@@ -56,7 +56,7 @@ def plot_imr_chart(data):
 # -- Streamlit UI --
 st.title("📊 MiniStat – Statistische Analysetool")
 
-uploaded_file = st.file_uploader("📁 Upload je CSV-bestand", type=["csv"])
+uploaded_file = st.file_uploader("📁 Upload je Data-bestand", type=["csv/xls"])
 
 chart_path = None  # variabele voor figuur
 
