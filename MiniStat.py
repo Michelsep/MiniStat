@@ -34,10 +34,10 @@ def plot_imr_chart(series):
 
     # Individuals Chart
     ax1.plot(data, marker='o', linestyle='-')
-                mean = np.mean(data)
-                std_dev = np.std(data, ddof=1)
-                ucl = mean + 3 * std_dev
-                lcl = mean - 3 * std_dev
+    mean = np.mean(data)
+    std_dev = np.std(data, ddof=1)
+    ucl = mean + 3 * std_dev
+    lcl = mean - 3 * std_dev
     ax1.axhline(mean, color='green', linestyle='--', label=f"Gemiddelde = {mean:.2f}")
     ax1.axhline(ucl, color='red', linestyle='--', label=f"UCL = {ucl:.2f}")
     ax1.axhline(lcl, color='red', linestyle='--', label=f"LCL = {lcl:.2f}")
