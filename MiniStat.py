@@ -246,12 +246,12 @@ elif analysis_type == "Boxplot":
     mean = np.mean(data)
     std_dev = np.std(data, ddof=1)
     ucl = mean + 3 * std_dev
-                lcl = mean - 3 * std_dev
-                ooc_points = [i for i, x in enumerate(data) if x > ucl or x < lcl]
-                if ooc_points:
-                st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
-                else:
-                st.success("✅ Geen out-of-control punten gedetecteerd.")
+    lcl = mean - 3 * std_dev
+    ooc_points = [i for i, x in enumerate(data) if x > ucl or x < lcl]
+    if ooc_points:
+    st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
+    else:
+    st.success("✅ Geen out-of-control punten gedetecteerd.")
                     summary_report += f"Boxplot voor kolommen: {', '.join(cols)}\n"
                     chart_path = "boxplot.png"
                     fig.savefig(chart_path)
