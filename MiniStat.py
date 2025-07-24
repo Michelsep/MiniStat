@@ -139,10 +139,9 @@ if uploaded_file:
                     y = y.loc[X.index]  # align indices
                     model = sm.OLS(y, X).fit()
                     st.write(model.summary())
-                    summary_text = (
-                        'Multipele regressie Y=' + y_col + ', X=' + ', '.join(x_cols) + ':\n' + str(model.summary()) + '\n'
-                    )
+                    summary_text = "Multipele regressie Y=" + y_col + ", X=" + ", ".join(x_cols) + ":
 " + str(model.summary()) + "
+"
                     summary_report += summary_text
 
                     if len(x_cols) == 1:
@@ -150,7 +149,7 @@ if uploaded_file:
                         sns.regplot(x=df[x_cols[0]], y=df[y_col], ax=ax)
                         ax.set_title("Regressieplot")
                         r_squared = model.rsquared
-                        ax.text(0.05, 0.95, f"$R^2$ = {r_squared:.4f}", transform=ax.transAxes, fontsize=10, verticalalignment='top')
+                        ax.text(0.05, 0.95, "$R^2$ = {:.4f}".format(r_squared), transform=ax.transAxes, fontsize=10, verticalalignment='top')
                         st.pyplot(fig)
                         chart_path = "regression_plot.png"
                         fig.savefig(chart_path)
@@ -158,7 +157,7 @@ if uploaded_file:
                         # Vergelijking tonen
                         intercept = model.params[0]
                         slope = model.params[1]
-                        equation = f"{y_col} = {intercept:.3f} + {slope:.3f} * {x_cols[0]}"
+                        equation = "{} = {:.3f} + {:.3f} * {}".format(y_col, intercept, slope, x_cols[0])
                         st.markdown(f"📉 Regressievergelijking: `{equation}`")
                     else:
                         st.info("📊 Regressiegrafiek alleen zichtbaar bij 1 X-variabele.")elif analysis_type == "ANOVA":
