@@ -198,6 +198,7 @@ if uploaded_file:
                 col = st.selectbox("Kolom voor controlekaart", numeric_columns)
                 st.write("Controlekaart:")
                 fig = plot_imr_chart(df[col])
+                st.pyplot(fig)
                 summary_report += f"I-MR controlekaart gegenereerd voor {col}.\n"
                 chart_path = "imr_chart.png"
                 fig.savefig(chart_path)
