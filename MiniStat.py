@@ -39,7 +39,7 @@ def plot_imr_chart(data):
     def detect_trend(series, window=6):
         last = series[-window:]
         if all(np.diff(last) > 0):
-            return "📈 Opwaartse trend gedetecteerd"
+        return "📈 Opwaartse trend gedetecteerd"
         elif all(np.diff(last) < 0):
             return "📉 Neerwaartse trend gedetecteerd"
         else:
