@@ -125,7 +125,7 @@ if uploaded_file:
         df = pd.read_csv(uploaded_file)
     elif uploaded_file.name.endswith((".xls", ".xlsx")):
         df = pd.read_excel(uploaded_file)
-                else:
+    else:
         st.error("❌ Bestandstype niet ondersteund.")
         st.stop()
 
