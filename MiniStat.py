@@ -243,6 +243,7 @@ if uploaded_file:
                 file_name="rapport_minitstat.pdf",
                 mime="application/pdf"
             )
+
             elif analysis_type == "Boxplot":
             cols = st.multiselect("Kies kolommen voor boxplot", numeric_columns)
             if cols:
