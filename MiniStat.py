@@ -35,8 +35,7 @@ def plot_imr_chart(data):
     mean_mr = df['MR'].mean()
     UCL_MR = mean_mr * 3.267
     ooc_mr = df[df['MR'] > UCL_MR]
-
-    
+    return fig
 def detect_trend(series, window=6):
     last = series[-window:]
     if all(np.diff(last) > 0):
