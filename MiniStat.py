@@ -100,6 +100,18 @@ def detect_trend(series, window=6):
     plt.figtext(0.5, 0.01, f"I-chart: {trend_i} | MR-chart: {trend_mr}", ha="center", fontsize=10)
     fig.tight_layout()
     st.pyplot(fig)
+                trend = detect_trend(df[col])
+                st.markdown(f"**📊 Trendanalyse:** {trend}")
+                data = df[col].dropna().values
+                mean = np.mean(data)
+                std_dev = np.std(data, ddof=1)
+                ucl = mean + 3 * std_dev
+                lcl = mean - 3 * std_dev
+                ooc_points = [i for i, x in enumerate(data) if x > ucl or x < lcl]
+                if ooc_points:
+                    st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
+                else:
+                    st.success("✅ Geen out-of-control punten gedetecteerd.")
     return fig
 
 st.set_page_config(layout="wide")
@@ -184,6 +196,18 @@ if uploaded_file:
                         ax.text(0.05, 0.95, "$R^2$ = {:.4f}".format(r_squared),
                                 transform=ax.transAxes, fontsize=10, verticalalignment='top')
                         st.pyplot(fig)
+                trend = detect_trend(df[col])
+                st.markdown(f"**📊 Trendanalyse:** {trend}")
+                data = df[col].dropna().values
+                mean = np.mean(data)
+                std_dev = np.std(data, ddof=1)
+                ucl = mean + 3 * std_dev
+                lcl = mean - 3 * std_dev
+                ooc_points = [i for i, x in enumerate(data) if x > ucl or x < lcl]
+                if ooc_points:
+                    st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
+                else:
+                    st.success("✅ Geen out-of-control punten gedetecteerd.")
                         chart_path = "regression_plot.png"
                         fig.savefig(chart_path)
 
@@ -199,6 +223,18 @@ if uploaded_file:
                 st.write("Controlekaart:")
                 fig = plot_imr_chart(df[col])
                 st.pyplot(fig)
+                trend = detect_trend(df[col])
+                st.markdown(f"**📊 Trendanalyse:** {trend}")
+                data = df[col].dropna().values
+                mean = np.mean(data)
+                std_dev = np.std(data, ddof=1)
+                ucl = mean + 3 * std_dev
+                lcl = mean - 3 * std_dev
+                ooc_points = [i for i, x in enumerate(data) if x > ucl or x < lcl]
+                if ooc_points:
+                    st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
+                else:
+                    st.success("✅ Geen out-of-control punten gedetecteerd.")
                 summary_report += f"I-MR controlekaart gegenereerd voor {col}.\n"
                 chart_path = "imr_chart.png"
                 fig.savefig(chart_path)
@@ -210,6 +246,18 @@ if uploaded_file:
                     df[cols].boxplot(ax=ax)
                     ax.set_title("Boxplot")
                     st.pyplot(fig)
+                trend = detect_trend(df[col])
+                st.markdown(f"**📊 Trendanalyse:** {trend}")
+                data = df[col].dropna().values
+                mean = np.mean(data)
+                std_dev = np.std(data, ddof=1)
+                ucl = mean + 3 * std_dev
+                lcl = mean - 3 * std_dev
+                ooc_points = [i for i, x in enumerate(data) if x > ucl or x < lcl]
+                if ooc_points:
+                    st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
+                else:
+                    st.success("✅ Geen out-of-control punten gedetecteerd.")
                     summary_report += f"Boxplot voor kolommen: {', '.join(cols)}\n"
                     chart_path = "boxplot.png"
                     fig.savefig(chart_path)
@@ -226,6 +274,18 @@ if uploaded_file:
                 ax.set_title(f"Distributie van {col}")
                 ax.legend()
                 st.pyplot(fig)
+                trend = detect_trend(df[col])
+                st.markdown(f"**📊 Trendanalyse:** {trend}")
+                data = df[col].dropna().values
+                mean = np.mean(data)
+                std_dev = np.std(data, ddof=1)
+                ucl = mean + 3 * std_dev
+                lcl = mean - 3 * std_dev
+                ooc_points = [i for i, x in enumerate(data) if x > ucl or x < lcl]
+                if ooc_points:
+                    st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
+                else:
+                    st.success("✅ Geen out-of-control punten gedetecteerd.")
                 summary_report += f"Distributieanalyse voor {col} met μ={mean:.2f}, σ={std:.2f}\n"
                 chart_path = "distribution.png"
                 fig.savefig(chart_path)
