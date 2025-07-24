@@ -34,10 +34,10 @@ def plot_imr_chart(series):
 
     # Individuals Chart
     ax1.plot(data, marker='o', linestyle='-')
-    mean = np.mean(data)
-    std_dev = np.std(data, ddof=1)
-    ucl = mean + 3 * std_dev
-    lcl = mean - 3 * std_dev
+                mean = np.mean(data)
+                std_dev = np.std(data, ddof=1)
+                ucl = mean + 3 * std_dev
+                lcl = mean - 3 * std_dev
     ax1.axhline(mean, color='green', linestyle='--', label=f"Gemiddelde = {mean:.2f}")
     ax1.axhline(ucl, color='red', linestyle='--', label=f"UCL = {ucl:.2f}")
     ax1.axhline(lcl, color='red', linestyle='--', label=f"LCL = {lcl:.2f}")
@@ -74,7 +74,7 @@ def detect_trend(series, window=6):
         return "📈 Opwaartse trend gedetecteerd"
     elif all(np.diff(last) < 0):
         return "📉 Neerwaartse trend gedetecteerd"
-    else:
+                else:
                     st.info("📊 Regressiegrafiek alleen zichtbaar bij 1 X-variabele.")
 
 
@@ -109,9 +109,9 @@ def detect_trend(series, window=6):
                 lcl = mean - 3 * std_dev
                 ooc_points = [i for i, x in enumerate(data) if x > ucl or x < lcl]
                 if ooc_points:
-                    st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
+                st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
                 else:
-                    st.success("✅ Geen out-of-control punten gedetecteerd.")
+                st.success("✅ Geen out-of-control punten gedetecteerd.")
     return fig
 
 st.set_page_config(layout="wide")
@@ -127,7 +127,7 @@ if uploaded_file:
         df = pd.read_csv(uploaded_file)
     elif uploaded_file.name.endswith((".xls", ".xlsx")):
         df = pd.read_excel(uploaded_file)
-    else:
+                else:
         st.error("❌ Bestandstype niet ondersteund.")
         st.stop()
 
@@ -173,7 +173,7 @@ if uploaded_file:
                     st.write(f"{groups[0]} vs {groups[1]}: t = {t_stat:.3f}, p = {p_val:.4f}")
                     summary_report += f"Two-sample T-test tussen {groups[0]} en {groups[1]} op {col}: t = {t_stat:.3f}, p = {p_val:.4f}\n"
                 else:
-                    st.warning("⚠️ Kies een kolom met exact 2 groepen.")
+                st.warning("⚠️ Kies een kolom met exact 2 groepen.")
 
             elif analysis_type == "Lineaire regressie":
                 y_col = st.selectbox("Y (afhankelijk)", numeric_columns)
@@ -205,9 +205,9 @@ if uploaded_file:
                 lcl = mean - 3 * std_dev
                 ooc_points = [i for i, x in enumerate(data) if x > ucl or x < lcl]
                 if ooc_points:
-                    st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
+                st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
                 else:
-                    st.success("✅ Geen out-of-control punten gedetecteerd.")
+                st.success("✅ Geen out-of-control punten gedetecteerd.")
                         chart_path = "regression_plot.png"
                         fig.savefig(chart_path)
 
@@ -215,8 +215,8 @@ if uploaded_file:
                         intercept = model.params[0]
                         slope = model.params[1]
                         equation = "{} = {:.3f} + {:.3f} * {}".format(y_col, intercept, slope, x_cols[0])
-                        st.markdown(f"📉 Regressievergelijking: `{equation}`")
-                    else:
+                st.markdown(f"📉 Regressievergelijking: `{equation}`")
+                else:
                         st.info("📊 Regressiegrafiek alleen zichtbaar bij 1 X-variabele.")
             elif analysis_type == "I-MR Control Chart":
                 col = st.selectbox("Kolom voor controlekaart", numeric_columns)
@@ -232,9 +232,9 @@ if uploaded_file:
                 lcl = mean - 3 * std_dev
                 ooc_points = [i for i, x in enumerate(data) if x > ucl or x < lcl]
                 if ooc_points:
-                    st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
+                st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
                 else:
-                    st.success("✅ Geen out-of-control punten gedetecteerd.")
+                st.success("✅ Geen out-of-control punten gedetecteerd.")
                 summary_report += f"I-MR controlekaart gegenereerd voor {col}.\n"
                 chart_path = "imr_chart.png"
                 fig.savefig(chart_path)
@@ -255,9 +255,9 @@ if uploaded_file:
                 lcl = mean - 3 * std_dev
                 ooc_points = [i for i, x in enumerate(data) if x > ucl or x < lcl]
                 if ooc_points:
-                    st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
+                st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
                 else:
-                    st.success("✅ Geen out-of-control punten gedetecteerd.")
+                st.success("✅ Geen out-of-control punten gedetecteerd.")
                     summary_report += f"Boxplot voor kolommen: {', '.join(cols)}\n"
                     chart_path = "boxplot.png"
                     fig.savefig(chart_path)
@@ -283,9 +283,9 @@ if uploaded_file:
                 lcl = mean - 3 * std_dev
                 ooc_points = [i for i, x in enumerate(data) if x > ucl or x < lcl]
                 if ooc_points:
-                    st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
+                st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
                 else:
-                    st.success("✅ Geen out-of-control punten gedetecteerd.")
+                st.success("✅ Geen out-of-control punten gedetecteerd.")
                 summary_report += f"Distributieanalyse voor {col} met μ={mean:.2f}, σ={std:.2f}\n"
                 chart_path = "distribution.png"
                 fig.savefig(chart_path)
