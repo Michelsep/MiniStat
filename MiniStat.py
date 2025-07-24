@@ -5,150 +5,113 @@ import numpy as np
 import scipy.stats as stats
 import statsmodels.api as sm
 import matplotlib.pyplot as plt
-import seaborn as sns
 from fpdf import FPDF
+import seaborn as sns
 import io
-import os
 
-# -- PDF genereren met optionele afbeelding --
-def generate_pdf(summary_text, image_path=None):
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
+st.set_page_config(layout="wide")
+st.title("📊 MiniStat: Statistische Analyse Tool")
 
-    for line in summary_text.split('\n'):
-        pdf.multi_cell(0, 10, line)
-
-    if image_path and os.path.exists(image_path):
-        pdf.image(image_path, x=10, y=None, w=180)
-
-    pdf_string = pdf.output(dest='S').encode('latin1')
-    buffer = io.BytesIO(pdf_string)
-    return buffer
-
-# -- I-MR Chart functie --
-def plot_imr_chart(data):
-    df = pd.DataFrame({'X': data.dropna()})
-    df['MR'] = df['X'].diff().abs()
-
-    fig, axes = plt.subplots(2, 1, figsize=(8, 6))
-    mean_x = df['X'].mean()
-    mr_bar = df['MR'].mean()
-
-    axes[0].plot(df['X'], marker='o')
-    axes[0].axhline(mean_x, color='green', linestyle='--', label='Gemiddelde')
-    UCL = mean_x + 3 * df['X'].std()
-    LCL = mean_x - 3 * df['X'].std()
-    axes[0].axhline(UCL, color='red', linestyle='--', label='UCL')
-    axes[0].axhline(LCL, color='red', linestyle='--', label='LCL')
-    axes[0].set_title("I-chart")
-    axes[0].legend()
-
-    axes[1].plot(df['MR'], marker='o')
-    axes[1].axhline(mr_bar, color='green', linestyle='--', label='Gemiddelde MR')
-    axes[1].axhline(mr_bar * 3.267, color='red', linestyle='--', label='UCL')
-    axes[1].set_title("MR-chart")
-    axes[1].legend()
-
-    st.pyplot(fig)
-    return fig
-
-# -- Streamlit UI --
-st.title("📊 MiniStat – Statistische Analysetool")
-
-uploaded_file = st.file_uploader("📁 Upload je gegevensbestand", type=["csv", "xls", "xlsx"])
-
-chart_path = None  # variabele voor figuur
-
+uploaded_file = st.file_uploader("Upload een CSV of Excel-bestand", type=["csv", "xls", "xlsx"])
 if uploaded_file:
-    if uploaded_file.name.endswith(".csv"):
-        df = pd.read_csv(uploaded_file)
-    elif uploaded_file.name.endswith((".xls", ".xlsx")):
-        df = pd.read_excel(uploaded_file)
-    else:
-        st.error("❌ Bestandstype niet ondersteund.")
+    try:
+        if uploaded_file.name.endswith(".csv"):
+            df = pd.read_csv(uploaded_file)
+        else:
+            df = pd.read_excel(uploaded_file)
+        st.success("✅ Bestand succesvol geladen.")
+    except Exception as e:
+        st.error(f"Fout bij inlezen: {e}")
         st.stop()
 
-    st.success("✅ Bestand geladen")
-
-    st.subheader("🔍 Voorbeeld van de dataset")
+    st.write("### Voorbeeld van de dataset")
     st.dataframe(df.head())
 
-    numeric_columns = df.select_dtypes(include=np.number).columns.tolist()
-    categorical_columns = df.select_dtypes(include='object').columns.tolist()
+    numeric_cols = df.select_dtypes(include=np.number).columns.tolist()
+    selected_column = st.selectbox("Kies een kolom voor analyse", numeric_cols)
 
-    st.sidebar.header("📌 Kies Analyse")
-    analysis_type = st.sidebar.radio(
-        "Selecteer analyse:",
-        ("Beschrijvende statistiek", "One-sample T-test", "Two-sample T-test", "Lineaire regressie", "ANOVA", "I-MR Control Chart")
-    )
+    summary_report = f"Statistisch rapport voor kolom: {selected_column}\n\n"
 
-    summary_report = ""
+    # Beschrijvende statistiek
+    desc = df[selected_column].describe()
+    summary_report += "### Beschrijvende statistiek\n"
+    summary_report += desc.to_string() + "\n\n"
+    st.write("### Beschrijvende statistiek")
+    st.write(desc)
 
-    if analysis_type == "Beschrijvende statistiek":
-        col = st.selectbox("Kies kolom", numeric_columns)
-        desc = df[col].describe()
-        st.write(desc)
-        summary_report += f"Beschrijvende statistiek voor {col}:\n{desc.to_string()}\n"
+    # Regressieanalyse
+    if len(numeric_cols) >= 2:
+        x_col = st.selectbox("Selecteer X (onafhankelijke variabele)", numeric_cols, index=0)
+        y_col = st.selectbox("Selecteer Y (afhankelijke variabele)", numeric_cols, index=1)
+        if x_col != y_col:
+            X = sm.add_constant(df[x_col])
+            model = sm.OLS(df[y_col], X).fit()
+            summary_report += f"### Lineaire regressie: {y_col} ~ {x_col}\n"
+            summary_report += str(model.summary()) + "\n\n"
+            st.write("### Lineaire Regressie Resultaten")
+            st.text(model.summary())
 
-    elif analysis_type == "One-sample T-test":
-        col = st.selectbox("Kies kolom", numeric_columns)
-        mu = st.number_input("Verwachte gemiddelde waarde", value=0.0)
-        t_stat, p_val = stats.ttest_1samp(df[col].dropna(), mu)
-        st.write(f"t = {t_stat:.3f}, p = {p_val:.4f}")
-        summary_report += f"One-sample T-test voor {col} (mu={mu}): t = {t_stat:.3f}, p = {p_val:.4f}\n"
+            # Regressieplot
+            fig1, ax1 = plt.subplots()
+            sns.regplot(x=x_col, y=y_col, data=df, ax=ax1)
+            ax1.set_title(f"Regressieplot: {y_col} vs. {x_col}")
+            fig1.tight_layout()
+            reg_path = "regression_plot.png"
+            fig1.savefig(reg_path)
+            plt.close(fig1)
 
-    elif analysis_type == "Two-sample T-test":
-        col = st.selectbox("Kies numerieke kolom", numeric_columns)
-        group_col = st.selectbox("Kies categorische kolom", categorical_columns)
-        groups = df[group_col].dropna().unique()
-        if len(groups) == 2:
-            g1 = df[df[group_col] == groups[0]][col].dropna()
-            g2 = df[df[group_col] == groups[1]][col].dropna()
-            t_stat, p_val = stats.ttest_ind(g1, g2, equal_var=False)
-            st.write(f"{groups[0]} vs {groups[1]}: t = {t_stat:.3f}, p = {p_val:.4f}")
-            summary_report += f"Two-sample T-test tussen {groups[0]} en {groups[1]} op {col}: t = {t_stat:.3f}, p = {p_val:.4f}\n"
+    # I-MR Chart
+    df['MR'] = df[selected_column].diff().abs()
+    mean_x = df[selected_column].mean()
+    std_x = df[selected_column].std()
+    UCL = mean_x + 3 * std_x
+    LCL = mean_x - 3 * std_x
+    ooc_points = df[(df[selected_column] > UCL) | (df[selected_column] < LCL)]
+
+    def detect_trend(series, window=6):
+        last = series[-window:]
+        if all(np.diff(last) > 0):
+            return "📈 Opwaartse trend gedetecteerd"
+        elif all(np.diff(last) < 0):
+            return "📉 Neerwaartse trend gedetecteerd"
         else:
-            st.warning("⚠️ Kies een kolom met exact 2 groepen.")
+            return "Geen duidelijke trend in de laatste waarnemingen"
 
-    elif analysis_type == "Lineaire regressie":
-        y_col = st.selectbox("Y (afhankelijk)", numeric_columns)
-        x_col = st.selectbox("X (onafhankelijk)", [col for col in numeric_columns if col != y_col])
-        X = sm.add_constant(df[x_col].dropna())
-        y = df[y_col].dropna()
-        model = sm.OLS(y.loc[X.index], X).fit()
-        st.write(model.summary())
-        summary_report += f"Regressie Y={y_col}, X={x_col}:\n{model.summary()}\n"
+    trend_text = detect_trend(df[selected_column])
 
-        fig, ax = plt.subplots()
-        sns.regplot(x=df[x_col], y=df[y_col], ax=ax)
-        ax.set_title("Regressieplot")
-        st.pyplot(fig)
+    fig2, ax2 = plt.subplots(figsize=(10, 5))
+    ax2.plot(df[selected_column], marker='o', label="Waarnemingen")
+    ax2.axhline(mean_x, color='green', linestyle='--', label='Gemiddelde')
+    ax2.axhline(UCL, color='red', linestyle='--', label='UCL')
+    ax2.axhline(LCL, color='red', linestyle='--', label='LCL')
+    ax2.scatter(ooc_points.index, ooc_points[selected_column], color='red', marker='X', s=100, label='OOC punten')
+    ax2.set_title("I-Chart met OOC detectie")
+    ax2.legend()
+    plt.figtext(0.5, -0.05, trend_text, ha="center", fontsize=10)
+    fig2.tight_layout()
+    st.pyplot(fig2)
+    imr_path = "imr_chart.png"
+    fig2.savefig(imr_path)
+    plt.close(fig2)
 
-        chart_path = "regression_plot.png"
-        fig.savefig(chart_path)
+    # PDF-generatie
+    def generate_pdf(text, image_path1=None, image_path2=None):
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Arial", size=12)
+        for line in text.split("\n"):
+            pdf.multi_cell(0, 8, line)
+        if image_path1:
+            pdf.add_page()
+            pdf.image(image_path1, x=10, w=180)
+        if image_path2:
+            pdf.add_page()
+            pdf.image(image_path2, x=10, w=180)
+        buffer = io.BytesIO()
+        pdf.output(buffer)
+        return buffer.getvalue()
 
-    elif analysis_type == "ANOVA":
-        dep = st.selectbox("Afhankelijke variabele", numeric_columns)
-        group = st.selectbox("Groepsvariabele", categorical_columns)
-        model = sm.formula.ols(f"{dep} ~ C({group})", data=df).fit()
-        anova_table = sm.stats.anova_lm(model, typ=2)
-        st.write(anova_table)
-        summary_report += f"ANOVA voor {dep} op {group}:\n{anova_table.to_string()}\n"
+    pdf_data = generate_pdf(summary_report, image_path1=reg_path if 'reg_path' in locals() else None,
+                            image_path2=imr_path)
 
-    elif analysis_type == "I-MR Control Chart":
-        col = st.selectbox("Kolom voor controlekaart", numeric_columns)
-        st.write("Controlekaart:")
-        fig = plot_imr_chart(df[col])
-        summary_report += f"I-MR controlekaart gegenereerd voor {col}.\n"
-        chart_path = "imr_chart.png"
-        fig.savefig(chart_path)
-
-    if summary_report:
-        pdf_data = generate_pdf(summary_report, image_path=chart_path)
-        st.download_button(
-            label="📄 Download rapport als PDF (inclusief grafiek indien van toepassing)",
-            data=pdf_data,
-            file_name="rapport_minitstat.pdf",
-            mime="application/pdf"
-        )
+    st.download_button("📄 Download PDF-rapport", data=pdf_data, file_name="MiniStat_Rapport.pdf", mime="application/pdf")
