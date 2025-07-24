@@ -22,8 +22,40 @@ def generate_pdf(summary_text, image_path=None):
     buffer = io.BytesIO(pdf_string)
     return buffer
 
-def plot_imr_chart(data):
-    df = pd.DataFrame({'X': data.dropna()})
+
+def plot_imr_chart(series):
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    data = series.dropna().values
+    moving_range = np.abs(np.diff(data))
+
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6), sharex=True)
+
+    # Individuals Chart
+    ax1.plot(data, marker='o', linestyle='-')
+    mean = np.mean(data)
+    std_dev = np.std(data, ddof=1)
+    ucl = mean + 3 * std_dev
+    lcl = mean - 3 * std_dev
+    ax1.axhline(mean, color='green', linestyle='--', label=f"Gemiddelde = {mean:.2f}")
+    ax1.axhline(ucl, color='red', linestyle='--', label=f"UCL = {ucl:.2f}")
+    ax1.axhline(lcl, color='red', linestyle='--', label=f"LCL = {lcl:.2f}")
+    ax1.set_title("Individuals Chart (I-chart)")
+    ax1.legend()
+
+    # Moving Range Chart
+    ax2.plot(moving_range, marker='s', linestyle='-')
+    mr_mean = np.mean(moving_range)
+    mr_ucl = mr_mean * 3.267
+    ax2.axhline(mr_mean, color='green', linestyle='--', label=f"Gemiddelde MR = {mr_mean:.2f}")
+    ax2.axhline(mr_ucl, color='red', linestyle='--', label=f"UCL = {mr_ucl:.2f}")
+    ax2.set_title("Moving Range Chart (MR-chart)")
+    ax2.legend()
+
+    plt.tight_layout()
+    return fig
+
     df['MR'] = df['X'].diff().abs()
 
     mean_x = df['X'].mean()
