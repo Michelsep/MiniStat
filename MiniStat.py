@@ -44,7 +44,7 @@ def detect_trend(series, window=6):
     elif all(np.diff(last) < 0):
         return "📉 Neerwaartse trend gedetecteerd"
     else:
-        return "Geen duidelijke trend in de laatste waarnemingen"
+                    st.info("📊 Regressiegrafiek alleen zichtbaar bij 1 X-variabele.")
 
 
     trend_i = detect_trend(df['X'])
@@ -85,7 +85,7 @@ if uploaded_file:
     elif uploaded_file.name.endswith((".xls", ".xlsx")):
         df = pd.read_excel(uploaded_file)
     else:
-        st.error("❌ Bestandstype niet ondersteund.")
+                    st.info("📊 Regressiegrafiek alleen zichtbaar bij 1 X-variabele.")
         st.stop()
 
     numeric_columns = df.select_dtypes(include=np.number).columns.tolist()
