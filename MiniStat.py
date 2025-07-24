@@ -256,12 +256,12 @@ elif analysis_type == "Boxplot":
         chart_path = "boxplot.png"
         fig.savefig(chart_path)
 
-            elif analysis_type == "Distributieanalyse":
-                col = st.selectbox("Kies kolom voor distributieanalyse", numeric_columns)
-                data = df[col].dropna()
-                mean, std = data.mean(), data.std()
-                fig, ax = plt.subplots()
-                sns.histplot(data, kde=False, stat='density', bins=20, ax=ax, color='skyblue', label='Histogram')
+elif analysis_type == "Distributieanalyse":
+        col = st.selectbox("Kies kolom voor distributieanalyse", numeric_columns)
+        data = df[col].dropna()
+        mean, std = data.mean(), data.std()
+        fig, ax = plt.subplots()
+        sns.histplot(data, kde=False, stat='density', bins=20, ax=ax, color='skyblue', label='Histogram')
                 x = np.linspace(data.min(), data.max(), 100)
                 p = stats.norm.pdf(x, mean, std)
                 ax.plot(x, p, 'r', linewidth=2, label='Normale verdeling')
