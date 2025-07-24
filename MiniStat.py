@@ -26,39 +26,54 @@ def generate_pdf(summary_text, image_path=None):
     buffer = io.BytesIO(pdf_string)
     return buffer
 
-# -- I-MR Chart functie --
+# -- I-MR Chart functie met OOC en trendanalyse --
 def plot_imr_chart(data):
     df = pd.DataFrame({'X': data.dropna()})
     df['MR'] = df['X'].diff().abs()
 
-    fig, axes = plt.subplots(2, 1, figsize=(8, 6))
     mean_x = df['X'].mean()
-    mr_bar = df['MR'].mean()
+    std_x = df['X'].std()
+    UCL = mean_x + 3 * std_x
+    LCL = mean_x - 3 * std_x
+    ooc_points = df[(df['X'] > UCL) | (df['X'] < LCL)]
 
+    def detect_trend(series, window=6):
+        last = series[-window:]
+        if all(np.diff(last) > 0):
+            return "📈 Opwaartse trend gedetecteerd"
+        elif all(np.diff(last) < 0):
+            return "📉 Neerwaartse trend gedetecteerd"
+        else:
+            return "Geen duidelijke trend in de laatste waarnemingen"
+
+    trend_text = detect_trend(df['X'])
+
+    fig, axes = plt.subplots(2, 1, figsize=(8, 6))
     axes[0].plot(df['X'], marker='o')
     axes[0].axhline(mean_x, color='green', linestyle='--', label='Gemiddelde')
-    UCL = mean_x + 3 * df['X'].std()
-    LCL = mean_x - 3 * df['X'].std()
     axes[0].axhline(UCL, color='red', linestyle='--', label='UCL')
     axes[0].axhline(LCL, color='red', linestyle='--', label='LCL')
+    axes[0].scatter(ooc_points.index, ooc_points['X'], color='red', zorder=5, label='OOC punten', marker='X', s=100)
     axes[0].set_title("I-chart")
     axes[0].legend()
 
     axes[1].plot(df['MR'], marker='o')
-    axes[1].axhline(mr_bar, color='green', linestyle='--', label='Gemiddelde MR')
-    axes[1].axhline(mr_bar * 3.267, color='red', linestyle='--', label='UCL')
+    axes[1].axhline(df['MR'].mean(), color='green', linestyle='--', label='Gemiddelde MR')
+    axes[1].axhline(df['MR'].mean() * 3.267, color='red', linestyle='--', label='UCL')
     axes[1].set_title("MR-chart")
     axes[1].legend()
 
+    fig.tight_layout()
+    plt.figtext(0.5, 0.01, trend_text, ha="center", fontsize=10)
     st.pyplot(fig)
     return fig
 
-# -- Streamlit UI --
+# -- Streamlit GUI --
 st.title("📊 MiniStat – Statistische Analysetool")
 
 uploaded_file = st.file_uploader("📁 Upload je gegevensbestand", type=["csv", "xls", "xlsx"])
 
-chart_path = None  # variabele voor figuur
+chart_path = None
 
 if uploaded_file:
     if uploaded_file.name.endswith(".csv"):
@@ -70,7 +85,6 @@ if uploaded_file:
         st.stop()
 
     st.success("✅ Bestand geladen")
-
     st.subheader("🔍 Voorbeeld van de dataset")
     st.dataframe(df.head())
 
@@ -141,6 +155,7 @@ if uploaded_file:
         st.write("Controlekaart:")
         fig = plot_imr_chart(df[col])
         summary_report += f"I-MR controlekaart gegenereerd voor {col}.\n"
+
         chart_path = "imr_chart.png"
         fig.savefig(chart_path)
 
