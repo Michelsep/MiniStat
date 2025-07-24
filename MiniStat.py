@@ -268,12 +268,12 @@ elif analysis_type == "Distributieanalyse":
         ax.set_title(f"Distributie van {col}")
         ax.legend()
         st.pyplot(fig)
-                trend = detect_trend(df[col])
-                st.markdown(f"**📊 Trendanalyse:** {trend}")
-                data = df[col].dropna().values
-                mean = np.mean(data)
-                std_dev = np.std(data, ddof=1)
-                ucl = mean + 3 * std_dev
+        trend = detect_trend(df[col])
+        st.markdown(f"**📊 Trendanalyse:** {trend}")
+        data = df[col].dropna().values
+        mean = np.mean(data)
+        std_dev = np.std(data, ddof=1)
+        ucl = mean + 3 * std_dev
                 lcl = mean - 3 * std_dev
                 ooc_points = [i for i, x in enumerate(data) if x > ucl or x < lcl]
                 if ooc_points:
