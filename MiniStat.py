@@ -215,10 +215,10 @@ if uploaded_file:
         st.markdown(f"📉 Regressievergelijking: `{equation}`")
     else:
         st.info("📊 Regressiegrafiek alleen zichtbaar bij 1 X-variabele.")
-                col = st.selectbox("Kolom voor controlekaart", numeric_columns)
-                st.write("Controlekaart:")
-                fig = plot_imr_chart(df[col])
-                st.pyplot(fig)
+    col = st.selectbox("Kolom voor controlekaart", numeric_columns)
+    st.write("Controlekaart:")
+    fig = plot_imr_chart(df[col])
+    st.pyplot(fig)
                 trend = detect_trend(df[col])
                 st.markdown(f"**📊 Trendanalyse:** {trend}")
                 data = df[col].dropna().values
