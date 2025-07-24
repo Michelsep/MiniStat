@@ -281,7 +281,7 @@ elif analysis_type == "Distributieanalyse":
         else:
             st.success("✅ Geen out-of-control punten gedetecteerd.")
         summary_report += f"Distributieanalyse voor {col} met μ={mean:.2f}, σ={std:.2f}\n"
-                fig.savefig(chart_path)
+        fig.savefig(chart_path)
 
             elif analysis_type == "Chi-kwadraat test":
                 col1 = st.selectbox("Kies categorische kolom 1", categorical_columns)
