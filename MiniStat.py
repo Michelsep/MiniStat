@@ -228,7 +228,6 @@ if uploaded_file:
     lcl = mean - 3 * std_dev
     ooc_points = [i for i, x in enumerate(data) if x > ucl or x < lcl]
     if ooc_points:
-    if ooc_points:
         st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
     else:
         st.success("✅ Geen out-of-control punten gedetecteerd.")
