@@ -244,8 +244,8 @@ if uploaded_file:
                 mime="application/pdf"
             )
 
-            elif analysis_type == "Boxplot":
-            cols = st.multiselect("Kies kolommen voor boxplot", numeric_columns)
+    elif analysis_type == "Boxplot":
+        cols = st.multiselect("Kies kolommen voor boxplot", numeric_columns)
             if cols:
             fig, ax = plt.subplots()
             df[cols].boxplot(ax=ax)
