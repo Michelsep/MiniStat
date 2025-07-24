@@ -233,6 +233,16 @@ if uploaded_file:
         st.success("✅ Geen out-of-control punten gedetecteerd.")
         chart_path = "imr_chart.png"
         fig.savefig(chart_path)
+            st.dataframe(df)
+
+        if summary_report and view_option != "📋 Alleen datatabel":
+            pdf_data = generate_pdf(summary_report, image_path=chart_path)
+            st.download_button(
+                label="📄 Download rapport als PDF (inclusief grafiek indien van toepassing)",
+                data=pdf_data,
+                file_name="rapport_minitstat.pdf",
+                mime="application/pdf"
+            )
             elif analysis_type == "Boxplot":
             cols = st.multiselect("Kies kolommen voor boxplot", numeric_columns)
             if cols:
@@ -292,13 +302,3 @@ if uploaded_file:
             summary_report += f"Chi-kwadraat test tussen {col1} en {col2}: chi2 = {chi2:.3f}, p = {p:.4f}\n"
             if view_option in ["📋 Alleen datatabel", "📊 Beide (resultaten + data)"]:
             st.subheader("🧾 Dataweergave")
-            st.dataframe(df)
-
-        if summary_report and view_option != "📋 Alleen datatabel":
-            pdf_data = generate_pdf(summary_report, image_path=chart_path)
-            st.download_button(
-                label="📄 Download rapport als PDF (inclusief grafiek indien van toepassing)",
-                data=pdf_data,
-                file_name="rapport_minitstat.pdf",
-                mime="application/pdf"
-            )
