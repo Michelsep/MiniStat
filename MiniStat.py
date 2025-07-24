@@ -252,9 +252,9 @@ elif analysis_type == "Boxplot":
         st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
     else:
         st.success("✅ Geen out-of-control punten gedetecteerd.")
-                    summary_report += f"Boxplot voor kolommen: {', '.join(cols)}\n"
-                    chart_path = "boxplot.png"
-                    fig.savefig(chart_path)
+        summary_report += f"Boxplot voor kolommen: {', '.join(cols)}\n"
+        chart_path = "boxplot.png"
+        fig.savefig(chart_path)
 
             elif analysis_type == "Distributieanalyse":
                 col = st.selectbox("Kies kolom voor distributieanalyse", numeric_columns)
