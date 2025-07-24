@@ -160,7 +160,8 @@ if uploaded_file:
                         equation = "{} = {:.3f} + {:.3f} * {}".format(y_col, intercept, slope, x_cols[0])
                         st.markdown(f"📉 Regressievergelijking: `{equation}`")
                     else:
-                        st.info("📊 Regressiegrafiek alleen zichtbaar bij 1 X-variabele.")elif analysis_type == "ANOVA":
+                    st.info("📊 Regressiegrafiek alleen zichtbaar bij 1 X-variabele.")
+            elif analysis_type == "ANOVA":
                 dep = st.selectbox("Afhankelijke variabele", numeric_columns)
                 group = st.selectbox("Groepsvariabele", categorical_columns)
                 model = sm.formula.ols(f"{dep} ~ C({group})", data=df).fit()
