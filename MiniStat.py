@@ -233,65 +233,64 @@ if uploaded_file:
         st.success("✅ Geen out-of-control punten gedetecteerd.")
         chart_path = "imr_chart.png"
         fig.savefig(chart_path)
-            elif analysis_type == "Boxplot":
-            cols = st.multiselect("Kies kolommen voor boxplot", numeric_columns)
-            if cols:
-            fig, ax = plt.subplots()
-            df[cols].boxplot(ax=ax)
-            ax.set_title("Boxplot")
-            st.pyplot(fig)
-            trend = detect_trend(df[col])
-            st.markdown(f"**📊 Trendanalyse:** {trend}")
-            data = df[col].dropna().values
-            mean = np.mean(data)
-            std_dev = np.std(data, ddof=1)
-            ucl = mean + 3 * std_dev
-            lcl = mean - 3 * std_dev
-            ooc_points = [i for i, x in enumerate(data) if x > ucl or x < lcl]
-            if ooc_points:
-            st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
-            else:
-            st.success("✅ Geen out-of-control punten gedetecteerd.")
-            summary_report += f"Boxplot voor kolommen: {', '.join(cols)}\n"
-            chart_path = "boxplot.png"
-            fig.savefig(chart_path)
-                        elif analysis_type == "Distributieanalyse":
-            col = st.selectbox("Kies kolom voor distributieanalyse", numeric_columns)
-            data = df[col].dropna()
-            mean, std = data.mean(), data.std()
-            fig, ax = plt.subplots()
-            sns.histplot(data, kde=False, stat='density', bins=20, ax=ax, color='skyblue', label='Histogram')
-            x = np.linspace(data.min(), data.max(), 100)
-            p = stats.norm.pdf(x, mean, std)
-            ax.plot(x, p, 'r', linewidth=2, label='Normale verdeling')
-            ax.set_title(f"Distributie van {col}")
-            ax.legend()
-            st.pyplot(fig)
-            trend = detect_trend(df[col])
-            st.markdown(f"**📊 Trendanalyse:** {trend}")
-            data = df[col].dropna().values
-            mean = np.mean(data)
-            std_dev = np.std(data, ddof=1)
-            ucl = mean + 3 * std_dev
-            lcl = mean - 3 * std_dev
-            ooc_points = [i for i, x in enumerate(data) if x > ucl or x < lcl]
-            if ooc_points:
-            st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
-            else:
-            st.success("✅ Geen out-of-control punten gedetecteerd.")
-            summary_report += f"Distributieanalyse voor {col} met μ={mean:.2f}, σ={std:.2f}\n"
-            fig.savefig(chart_path)
-                        elif analysis_type == "Chi-kwadraat test":
-            col1 = st.selectbox("Kies categorische kolom 1", categorical_columns)
-            col2 = st.selectbox("Kies categorische kolom 2", categorical_columns)
-            table = pd.crosstab(df[col1], df[col2])
-            chi2, p, dof, expected = stats.chi2_contingency(table)
-            st.write("Contingentietabel")
-            st.dataframe(table)
-            st.write(f"Chi-kwadraat = {chi2:.3f}, df = {dof}, p-waarde = {p:.4f}")
-            summary_report += f"Chi-kwadraat test tussen {col1} en {col2}: chi2 = {chi2:.3f}, p = {p:.4f}\n"
-
-        if view_option in ["📋 Alleen datatabel", "📊 Beide (resultaten + data)"]:
+    elif analysis_type == "Boxplot":
+        cols = st.multiselect("Kies kolommen voor boxplot", numeric_columns)
+        if cols:
+        fig, ax = plt.subplots()
+        df[cols].boxplot(ax=ax)
+        ax.set_title("Boxplot")
+        st.pyplot(fig)
+        trend = detect_trend(df[col])
+        st.markdown(f"**📊 Trendanalyse:** {trend}")
+        data = df[col].dropna().values
+        mean = np.mean(data)
+        std_dev = np.std(data, ddof=1)
+        ucl = mean + 3 * std_dev
+        lcl = mean - 3 * std_dev
+        ooc_points = [i for i, x in enumerate(data) if x > ucl or x < lcl]
+        if ooc_points:
+        st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
+        else:
+        st.success("✅ Geen out-of-control punten gedetecteerd.")
+        summary_report += f"Boxplot voor kolommen: {', '.join(cols)}\n"
+        chart_path = "boxplot.png"
+        fig.savefig(chart_path)
+        elif analysis_type == "Distributieanalyse":
+        col = st.selectbox("Kies kolom voor distributieanalyse", numeric_columns)
+        data = df[col].dropna()
+        mean, std = data.mean(), data.std()
+        fig, ax = plt.subplots()
+        sns.histplot(data, kde=False, stat='density', bins=20, ax=ax, color='skyblue', label='Histogram')
+        x = np.linspace(data.min(), data.max(), 100)
+        p = stats.norm.pdf(x, mean, std)
+        ax.plot(x, p, 'r', linewidth=2, label='Normale verdeling')
+        ax.set_title(f"Distributie van {col}")
+        ax.legend()
+        st.pyplot(fig)
+        trend = detect_trend(df[col])
+        st.markdown(f"**📊 Trendanalyse:** {trend}")
+        data = df[col].dropna().values
+        mean = np.mean(data)
+        std_dev = np.std(data, ddof=1)
+        ucl = mean + 3 * std_dev
+        lcl = mean - 3 * std_dev
+        ooc_points = [i for i, x in enumerate(data) if x > ucl or x < lcl]
+        if ooc_points:
+        st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
+        else:
+        st.success("✅ Geen out-of-control punten gedetecteerd.")
+        summary_report += f"Distributieanalyse voor {col} met μ={mean:.2f}, σ={std:.2f}\n"
+        fig.savefig(chart_path)
+        elif analysis_type == "Chi-kwadraat test":
+        col1 = st.selectbox("Kies categorische kolom 1", categorical_columns)
+        col2 = st.selectbox("Kies categorische kolom 2", categorical_columns)
+        table = pd.crosstab(df[col1], df[col2])
+        chi2, p, dof, expected = stats.chi2_contingency(table)
+        st.write("Contingentietabel")
+        st.dataframe(table)
+        st.write(f"Chi-kwadraat = {chi2:.3f}, df = {dof}, p-waarde = {p:.4f}")
+        summary_report += f"Chi-kwadraat test tussen {col1} en {col2}: chi2 = {chi2:.3f}, p = {p:.4f}\n"
+                if view_option in ["📋 Alleen datatabel", "📊 Beide (resultaten + data)"]:
             st.subheader("🧾 Dataweergave")
             st.dataframe(df)
 
