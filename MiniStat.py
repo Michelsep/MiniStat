@@ -233,7 +233,7 @@ if uploaded_file:
         st.success("✅ Geen out-of-control punten gedetecteerd.")
         chart_path = "imr_chart.png"
         fig.savefig(chart_path)
-    elif analysis_type == "Boxplot":
+elif analysis_type == "Boxplot":
     cols = st.multiselect("Kies kolommen voor boxplot", numeric_columns)
     if cols:
     fig, ax = plt.subplots()
