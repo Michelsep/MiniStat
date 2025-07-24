@@ -283,12 +283,12 @@ elif analysis_type == "Distributieanalyse":
         summary_report += f"Distributieanalyse voor {col} met μ={mean:.2f}, σ={std:.2f}\n"
         fig.savefig(chart_path)
 
-            elif analysis_type == "Chi-kwadraat test":
-                col1 = st.selectbox("Kies categorische kolom 1", categorical_columns)
-                col2 = st.selectbox("Kies categorische kolom 2", categorical_columns)
-                table = pd.crosstab(df[col1], df[col2])
-                chi2, p, dof, expected = stats.chi2_contingency(table)
-                st.write("Contingentietabel")
+elif analysis_type == "Chi-kwadraat test":
+        col1 = st.selectbox("Kies categorische kolom 1", categorical_columns)
+        col2 = st.selectbox("Kies categorische kolom 2", categorical_columns)
+        table = pd.crosstab(df[col1], df[col2])
+        chi2, p, dof, expected = stats.chi2_contingency(table)
+        st.write("Contingentietabel")
                 st.dataframe(table)
                 st.write(f"Chi-kwadraat = {chi2:.3f}, df = {dof}, p-waarde = {p:.4f}")
                 summary_report += f"Chi-kwadraat test tussen {col1} en {col2}: chi2 = {chi2:.3f}, p = {p:.4f}\n"
