@@ -231,8 +231,8 @@ if uploaded_file:
         st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
     else:
         st.success("✅ Geen out-of-control punten gedetecteerd.")
-                chart_path = "imr_chart.png"
-                fig.savefig(chart_path)
+        chart_path = "imr_chart.png"
+        fig.savefig(chart_path)
 
             elif analysis_type == "Boxplot":
                 cols = st.multiselect("Kies kolommen voor boxplot", numeric_columns)
