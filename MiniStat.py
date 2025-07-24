@@ -233,7 +233,7 @@ if uploaded_file:
         st.success("✅ Geen out-of-control punten gedetecteerd.")
         chart_path = "imr_chart.png"
         fig.savefig(chart_path)
-            st.dataframe(df)
+        st.dataframe(df)
 
         if summary_report and view_option != "📋 Alleen datatabel":
             pdf_data = generate_pdf(summary_report, image_path=chart_path)
