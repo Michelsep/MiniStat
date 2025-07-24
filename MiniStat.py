@@ -139,9 +139,10 @@ if uploaded_file:
                     y = y.loc[X.index]  # align indices
                     model = sm.OLS(y, X).fit()
                     st.write(model.summary())
-                    summary_report += f"Multipele regressie Y={y_col}, X={', '.join(x_cols)}:
-{model.summary()}
+                    summary_text = f"Multipele regressie Y={y_col}, X={', '.join(x_cols)}:
+" + str(model.summary()) + "
 "
+                    summary_report += summary_text
 
                     if len(x_cols) == 1:
                         fig, ax = plt.subplots()
