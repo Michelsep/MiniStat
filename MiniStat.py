@@ -171,7 +171,6 @@ if uploaded_file:
                     st.write(f"{groups[0]} vs {groups[1]}: t = {t_stat:.3f}, p = {p_val:.4f}")
                     summary_report += f"Two-sample T-test tussen {groups[0]} en {groups[1]} op {col}: t = {t_stat:.3f}, p = {p_val:.4f}\n"
                 else:
-                st.warning("⚠️ Kies een kolom met exact 2 groepen.")
                     st.warning("⚠️ Kies een kolom met exact 2 groepen.")
             elif analysis_type == "Lineaire regressie":
                 y_col = st.selectbox("Y (afhankelijk)", numeric_columns)
