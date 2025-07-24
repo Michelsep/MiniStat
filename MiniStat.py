@@ -107,9 +107,9 @@ def detect_trend(series, window=6):
     lcl = mean - 3 * std_dev
     ooc_points = [i for i, x in enumerate(data) if x > ucl or x < lcl]
     if ooc_points:
-    st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
+        st.warning(f"⚠️ Out-of-control punten gedetecteerd bij index: {ooc_points}")
     else:
-                st.success("✅ Geen out-of-control punten gedetecteerd.")
+        st.success("✅ Geen out-of-control punten gedetecteerd.")
     return fig
 
 st.set_page_config(layout="wide")
