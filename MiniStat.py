@@ -43,6 +43,7 @@ def plot_imr_chart(data):
         elif all(np.diff(last) < 0):
             return "📉 Neerwaartse trend gedetecteerd"
         else:
+                    pass  # placeholder voor else-block
             return "Geen duidelijke trend in de laatste waarnemingen"
 
     trend_i = detect_trend(df['X'])
@@ -83,6 +84,7 @@ if uploaded_file:
     elif uploaded_file.name.endswith((".xls", ".xlsx")):
         df = pd.read_excel(uploaded_file)
     else:
+                    pass  # placeholder voor else-block
         st.error("❌ Bestandstype niet ondersteund.")
         st.stop()
 
