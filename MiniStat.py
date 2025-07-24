@@ -85,7 +85,6 @@ if uploaded_file:
     elif uploaded_file.name.endswith((".xls", ".xlsx")):
         df = pd.read_excel(uploaded_file)
     else:
-                    pass  # placeholder voor else-block
         st.error("❌ Bestandstype niet ondersteund.")
         st.stop()
 
